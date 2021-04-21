@@ -8,9 +8,7 @@ def count(request):
     if request.method == 'POST':
         text = request.POST['text_string']
         text_length = len(text)
-        text_length_no_space = len(''.join(text.strip().split(' ')))
-        
-        print(text_length, text_length_no_space)
+        text_length_no_space = len(''.join(text.strip().split(' ')))        
         context = {
             'text': text,
             'length': text_length,
