@@ -12,7 +12,7 @@
     <h1>글자 수 세기 서비스</h1>
     <form action="{% url 'count' %}" method="POST">
         {% csrf_token %}
-        <input type="text" name="text_string">
+        <textarea type="text" name="text_string"></textarea>
         <button type="submit">제출</button>
     </form>
 </body>

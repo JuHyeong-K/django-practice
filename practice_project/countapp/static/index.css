@@ -1,3 +1,10 @@
 h1 {
     color: blue;
 }
+textarea {
+    display: block;
+    resize: none;
+    width: 500px;
+    height: 300px;
+    font-size: 2em;
+}
