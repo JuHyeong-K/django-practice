@@ -8,8 +8,16 @@
 </head>
 <body>
     <h1>index</h1>
-    {% for class in classes %}
-    <li>{{ class.class_num }} 반 : {{ class.students_num }}</li>
-    {% endfor %}
+    <ul>
+        {% for class in classes %}
+            <li>{{ class.num }} 반 : {{ class.students_num }}</li>
+        {% endfor %}
+    </ul>
+    <h2>categories</h2>
+    <ul>
+        {% for category in categories %}
+            <li>{{category.name}}</li>
+        {% endfor %}
+    </ul>
 </body>
 </html>
