@@ -20,6 +20,6 @@ from crpractice import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
-    path('categories', views.categories, name='categories'),
-    path('detail', views.detail, name='detail')
+    path('categories/<int:category_pk>/', views.categories, name='categories'),
+    path('detail/<int:title_pk>/', views.detail, name='detail'),
 ]
