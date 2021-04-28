@@ -8,6 +8,7 @@
 </head>
 <body>
     <h1>{{ target_category }}</h1>
+    <a href="{% url 'add' target_category.pk %}">Add</a>
     <ul>
         {% for title in titles %}
         <li>
