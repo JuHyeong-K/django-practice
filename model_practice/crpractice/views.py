@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import MyClass, Category, Article
 
 # Create your views here.
@@ -12,7 +12,8 @@ def index(request):
     return render(request, 'index.html', context)
 
 def categories(request, category_pk):
-    target_category = Category.objects.get(pk=category_pk)
+    # target_category = Category.objects.get(pk=category_pk)
+    target_category = get_object_or_404(Category, pk=category_pk)
     titles = Article.objects.filter(category=target_category)
     context = {
         'target_category': target_category,
@@ -21,7 +22,8 @@ def categories(request, category_pk):
     return render(request, 'categories.html', context)
 
 def detail(request, title_pk):
-    target_title = Article.objects.get(pk=title_pk)
+    # target_title = Article.objects.get(pk=title_pk)
+    target_title = get_object_or_404(Article, pk=title_pk)
     context = {
         'target_title': target_title
     }
@@ -37,14 +39,15 @@ def add(request, category_pk):
         'error': error
     }
     if request.method == 'POST':
-        category = Category.objects.get(pk=category_pk)
+        # category = Category.objects.get(pk=category_pk)
+        category = get_object_or_404(Category, pk=category_pk)
         topic = request.POST['title']
         author = request.POST['author']
         content = request.POST['content']
         if (topic == '' or author == '' or content == ''):
             context['error']['error'] = True
             context['error']['msg'] = '모두 입력해주세요!'
-        else: 
+        else:
             Article.objects.create(
                 category = category,
                 topic = topic,
