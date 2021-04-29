@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Edit</h1>
+    {% if error.error %}
+    <h2>{{ error.msg }}</h2>
+    {% endif %}
+    <form action="{% url 'edit' article.pk %}" method="POST">
+        {% csrf_token %}
+        <label for="text_title">title :</label>
+        <input type="text" name="title" id="text_title" value="{{ article.topic }}" placeholder="제목"><br/><br/>
+        <label for="text_author">author :</label>
+        <input type="text" name="author" id="text_author"  value="{{ article.author }}" placeholder="작성자"><br/><br/>
+        <label for="text_content">content :</label><br/>
+        <textarea name="content" id="text_content" cols="30" rows="10" placeholder="내용">{{ article.content }}</textarea><br/><br/>
+        <button type="submit">Edit</button>
+    </form>
+</body>
+</html>

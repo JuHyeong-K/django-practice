@@ -25,7 +25,9 @@ def categories(request, category_pk):
 def detail(request, title_pk):
     # target_title = Article.objects.get(pk=title_pk)
     target_title = get_object_or_404(Article, pk=title_pk)
+    target_category = get_object_or_404(Category, name=target_title.category)
     context = {
+        'target_category_pk': target_category.pk,
         'target_title': target_title
     }
     return render(request, 'detail.html', context)
@@ -57,3 +59,30 @@ def add(request, category_pk):
             )
             return redirect('categories', category_pk)
     return render(request, 'add.html', context)
+
+def edit(request, article_pk):
+    article = get_object_or_404(Article, pk=article_pk)
+    error = {
+        'error': False,
+        'msg': ''
+    }
+    context = {
+        'article_pk': article_pk,
+        'article': article,
+        'error': error
+    }
+    if request.method == 'POST':
+        topic = request.POST['title']
+        author = request.POST['author']
+        content = request.POST['content']
+        if (topic == '' or author == '' or content == ''):
+            context['error']['error'] = True
+            context['error']['msg'] = '모든 내용을 입력해주세요!!!'
+        else:
+            Article.objects.filter(pk=article_pk).update(
+                topic = topic,
+                author = author,
+                content = content
+            )
+            return redirect('detail', article_pk)
+    return render(request, 'edit.html', context)
