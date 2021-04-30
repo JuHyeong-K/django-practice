@@ -19,5 +19,6 @@
             <li><a href="{% url 'categories' category.pk %}">{{category.name}}</a></li>
         {% endfor %}
     </ul>
+    <a href="{% url 'add' 0 %}">Add</a>
 </body>
 </html>

@@ -11,8 +11,19 @@
     {% if error.error %}
     <h2>{{ error.msg }}</h2>
     {% endif %}
+
     <form action="{% url 'add' category_pk %}" method="POST">
         {% csrf_token %}
+        <select name="category" id="text_category">
+            <option value="null">카테고리를 선택해주세요</option>
+            {% for category in categories %}
+            {% if category.pk == category_pk %}
+            <option value="{{ category }}" selected>{{ category }}</option>
+            {% else %}
+            <option value="{{ category }}">{{ category }}</option>
+            {% endif %}
+            {% endfor %}
+        </select><br/><br/>
         <label for="text_title">title :</label>
         <input type="text" name="title" id="text_title" placeholder="제목"><br/><br/>
         <label for="text_author">author :</label>

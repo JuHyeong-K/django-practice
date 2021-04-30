@@ -30,6 +30,7 @@ class Article(models.Model):
     content = models.CharField(max_length=100)
     date = models.DateField(auto_now=True)
     author = models.CharField(max_length=30)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.topic}"

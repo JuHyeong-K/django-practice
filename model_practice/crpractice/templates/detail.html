@@ -13,5 +13,6 @@
     <p>작성자 : {{ target_title.author }}</p>
     <p>내용 : {{ target_title.content }}</p>
     <a href="{% url 'edit' target_title.pk %}">Edit</a>
+    <a href="{% url 'delete' target_title.pk %}">Delete</a>
 </body>
 </html>
