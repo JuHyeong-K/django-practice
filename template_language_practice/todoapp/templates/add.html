@@ -1,0 +1,8 @@
+<div>
+    <form action="{% url 'add'%}" method="POST">
+        {% csrf_token %}
+        <label for="text_content"></label>
+        <input type="text" id="text_content" name='content' placeholder="Write todo!">
+        <button type="submit">Add</button>
+    </form>
+</div>

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% load static %}
+<link rel="stylesheet" href="{% static "style.css" %}">
+{% endblock %}
+
+{% block content %}
+<h1>My TodoList</h1>
+{% include "add.html" %}
+<ul>
+{% for todo in todos %}
+    {% if todo.pk == target_todo.pk %}
+<form action="{% url 'edit' target_todo.pk %}" method="POST">
+    {% csrf_token %}
+    <label for="content_text"></label>
+    <input type="text" id="content_text" name="edited_content" value="{{ target_todo.content }}" placeholder="Write todo!">
+    <button type="submit">Edit</button>
+</form>
+    {% else %}
+    <li>{{ todo.content }}</li><a href="{% url 'edit' todo.pk %}">Edit</a><a href="{% url 'completed' todo.pk %}">Complete</a><br>
+    {% endif %}
+{% endfor %}
+</ul>
+{% endblock content %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% load static %}
+<link rel="stylesheet" href="{% static "style.css" %}">
+{% endblock %}
+
+{% block content %}
+<h1>My TodoList</h1>
+{% include "add.html" %}
+<ul>
+    {% for todo in todos %}
+    {% if todo.is_completed %}
+    <li class="completed">{{ todo.content }}</li><a href="{% url 'edit' todo.pk %}">Edit</a><a href="{% url 'completed' todo.pk %}">Complete</a><br>
+    {% else %}
+    <li>{{ todo.content }}</li><a href="{% url 'edit' todo.pk %}">Edit</a><a href="{% url 'completed' todo.pk %}">Complete</a><br>
+    {% endif %}
+    {% endfor %}
+</ul>
+{% endblock content%}
