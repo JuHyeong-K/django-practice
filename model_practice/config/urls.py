@@ -25,4 +25,7 @@ urlpatterns = [
     path('add/<int:category_pk>', views.add, name='add'),
     path('edit/<int:article_pk>', views.edit, name='edit'),
     path('delete/<int:article_pk>', views.delete, name='delete'),
+    path('signup/', views.signup, name='signup'),
+    path('login/', views.login_views, name='login'),
+    path('logout/', views.logout_views, name='logout'),
 ]

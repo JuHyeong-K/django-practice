@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Sign up</h1>
+    {% if error.state %}
+    <h2>{{ error.msg }}</h2>
+    {% endif %}
+    <form action="{% url 'signup' %}" method="POST">
+        {% csrf_token %}
+        <label for="identification">ID: </label>
+        <input type="text" name="user_id" id="identification">
+        <br>
+        <br>
+        <label for="password">PW: </label>
+        <input type="password" name="user_pw" id="password">
+        <br>
+        <br>
+        <label for="password_check">PW_Check: </label>
+        <input type="password" name="user_pw_check" id="password_check">
+        <br>
+        <br>
+        <button type="submit">Sign up</button>
+    </form>
+</body>
+</html>

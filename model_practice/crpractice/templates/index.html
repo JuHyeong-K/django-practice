@@ -8,6 +8,11 @@
 </head>
 <body>
     <h1>index</h1>
+    {% if user.is_authenticated %}
+    <form action="{% url 'logout' %}" method="POST">
+        {% csrf_token %}
+        <button type="submit">Log out</button>
+    </form>
     <ul>
         {% for class in classes %}
             <li>{{ class.num }} 반 : {{ class.students_num }}</li>
@@ -19,6 +24,14 @@
             <li><a href="{% url 'categories' category.pk %}">{{category.name}}</a></li>
         {% endfor %}
     </ul>
-    <a href="{% url 'add' 0 %}">Add</a>
+    <!-- <a href="{% url 'add' 0 %}">Add</a> -->
+    {% else %}
+    <form action="{% url 'signup' %}" method="GET">
+        <button type="submit">회원가입</button>
+    </form>
+    <form action="{% url 'login' %}" method="GET">
+        <button type="submit">로그인</button>
+    </form>
+    {% endif %}
 </body>
 </html>

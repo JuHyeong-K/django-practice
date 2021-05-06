@@ -1,6 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import MyClass, Category, Article
 from django.core.exceptions import ObjectDoesNotExist # get()요청의 예외처리 except: ObjectDoesNoteExist
+from django.contrib.auth.models import User
+from django.contrib.auth import login, logout, authenticate
+
 
 # Create your views here.
 def index(request):
@@ -103,3 +106,80 @@ def delete(request, article_pk):
     target_article.update(is_deleted=True)
 
     return redirect('categories', category_pk)
+
+def signup(request):
+    context = {
+        'error': {
+            'state': False,
+            'msg': ''
+        }
+    }
+    if request.method == 'POST':
+        user_id = request.POST['user_id']
+        user_pw = request.POST['user_pw']
+        user_pw_check = request.POST['user_pw_check']
+
+        user_check_id = User.objects.filter(username=user_id)
+        print(user_check_id)
+
+        if (user_id and user_pw):
+            if len(user_check_id) == 0:
+                if (user_pw == user_pw_check):
+                    user = User.objects.create_user(
+                        username=user_id,
+                        password=user_pw
+                    )
+                    return redirect('index')
+                else:
+                    context['error']['state'] = True
+                    context['error']['msg'] = 'PW_CHECK'
+            else:
+                context['error']['state'] = True
+                context['error']['msg'] = 'ID_EXIST'
+        else:
+            context['error']['state'] = True
+            context['error']['msg'] = 'ID_PW_MISSING'
+
+    return render(request, 'signup.html', context)
+
+def login_views(request):
+    context = {
+        'error': {
+            'state': False,
+            'msg': ''
+        },
+        'user': {
+            'is_authenticated': False
+        }
+    }
+    if request.method == 'POST':
+        login_id = request.POST['login_id']
+        login_pw = request.POST['login_pw']
+
+        login_user = User.objects.filter(username=login_id)
+
+        if (login_id and login_pw):
+            if len(login_user) != 0:
+                user = authenticate(
+                    username=login_id,
+                    password=login_pw
+                )
+                if user != None:
+                    login(request, user)
+                    context['user']['is_authenticated'] = True
+                    return redirect('index')
+                else:
+                    context['error']['state'] = True
+                    context['error']['msg'] = 'PW_CHECK'
+            else:
+                context['error']['state'] = True
+                context['error']['msg'] = 'ID_NOT_EXIST'
+        else:
+            context['error']['state'] = True
+            context['error']['msg'] = 'ID_PW_MISSING'
+
+    return render(request, 'login.html', context)
+
+def logout_views(request):
+    logout(request)
+    return redirect('index')
