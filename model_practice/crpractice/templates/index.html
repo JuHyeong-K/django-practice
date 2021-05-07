@@ -13,11 +13,6 @@
         {% csrf_token %}
         <button type="submit">Log out</button>
     </form>
-    <ul>
-        {% for class in classes %}
-            <li>{{ class.num }} 반 : {{ class.students_num }}</li>
-        {% endfor %}
-    </ul>
     <h2>categories</h2>
     <ul>
         {% for category in categories %}

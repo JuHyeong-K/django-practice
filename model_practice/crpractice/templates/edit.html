@@ -16,7 +16,7 @@
         <label for="text_title">title :</label>
         <input type="text" name="title" id="text_title" value="{{ article.topic }}" placeholder="제목"><br/><br/>
         <label for="text_author">author :</label>
-        <input type="text" name="author" id="text_author"  value="{{ article.author }}" placeholder="작성자"><br/><br/>
+        <input type="text" name="author" id="text_author"  value="{{ user.username }}" placeholder="작성자" disabled><br/><br/>
         <label for="text_content">content :</label><br/>
         <textarea name="content" id="text_content" cols="30" rows="10" placeholder="내용">{{ article.content }}</textarea><br/><br/>
         <button type="submit">Edit</button>

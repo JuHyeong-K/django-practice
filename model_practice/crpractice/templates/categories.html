@@ -7,7 +7,7 @@
     <title>Categories</title>
 </head>
 <body>
-    <h1>{{ target_category }}</h1>
+    <h1>{{ target_category.name }}</h1>
     <a href="{% url 'index' %}">back</a>
     <ul>
         {% for title in titles %}
@@ -17,6 +17,8 @@
         </li>
         {% endfor %}
     </ul>
+    {% if user.is_authenticated %}
     <a href="{% url 'add' target_category.pk %}">Add</a>
+    {% endif %}
 </body>
 </html>

@@ -1,27 +1,23 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import MyClass, Category, Article
+from .models import Category, Article, Member, Comment
 from django.core.exceptions import ObjectDoesNotExist # get()요청의 예외처리 except: ObjectDoesNoteExist
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
+import re
 
 
 # Create your views here.
 def index(request):
-    classes = MyClass.objects.all()
     categories = Category.objects.all()
     context = {
-        'classes': classes,
         'categories': categories
-    }
+        }
     return render(request, 'index.html', context)
 
 def categories(request, category_pk):
     target_category = get_object_or_404(Category, pk=category_pk)
     titles = Article.objects.filter(category=target_category).exclude(is_deleted=True)
-    # article_list = []
-    # for title in titles:
-    #     if title.is_deleted == False:
-    #         article_list.append(title)
+
     context = {
         'target_category': target_category,
         'titles': titles
@@ -29,11 +25,11 @@ def categories(request, category_pk):
     return render(request, 'categories.html', context)
 
 def detail(request, title_pk):
-    target_title = get_object_or_404(Article, pk=title_pk)
-    target_category = get_object_or_404(Category, name=target_title.category)
+    target_article = get_object_or_404(Article, pk=title_pk)
+    target_category = get_object_or_404(Category, name=target_article.category.name)
     context = {
         'target_category_pk': target_category.pk,
-        'target_title': target_title
+        'target_article': target_article
     }
     return render(request, 'detail.html', context)
 
@@ -55,7 +51,7 @@ def add(request, category_pk):
         selected_category_name = request.POST['category']
         category = get_object_or_404(Category, name=selected_category_name)
         topic = request.POST['title']
-        author = request.POST['author']
+        author = request.user
         content = request.POST['content']
         if (topic == '' or author == '' or content == '' or selected_category_name == 'null'):
             context['error']['error'] = True
@@ -86,7 +82,7 @@ def edit(request, article_pk):
     }
     if request.method == 'POST':
         topic = request.POST['title']
-        author = request.POST['author']
+        author = request.user
         content = request.POST['content']
         if (topic == '' or author == '' or content == ''):
             context['error']['error'] = True
@@ -108,10 +104,12 @@ def delete(request, article_pk):
     return redirect('categories', category_pk)
 
 def signup(request):
+    error_state = False
+    error_msg = ''
     context = {
         'error': {
-            'state': False,
-            'msg': ''
+            'state': error_state,
+            'msg': error_msg
         }
     }
     if request.method == 'POST':
@@ -119,26 +117,42 @@ def signup(request):
         user_pw = request.POST['user_pw']
         user_pw_check = request.POST['user_pw_check']
 
-        user_check_id = User.objects.filter(username=user_id)
-        print(user_check_id)
+        member_name = request.POST['member_name']
+        member_intro = request.POST['member_intro']
 
-        if (user_id and user_pw):
-            if len(user_check_id) == 0:
-                if (user_pw == user_pw_check):
-                    user = User.objects.create_user(
-                        username=user_id,
-                        password=user_pw
-                    )
-                    return redirect('index')
-                else:
-                    context['error']['state'] = True
-                    context['error']['msg'] = 'PW_CHECK'
-            else:
-                context['error']['state'] = True
-                context['error']['msg'] = 'ID_EXIST'
-        else:
-            context['error']['state'] = True
-            context['error']['msg'] = 'ID_PW_MISSING'
+        user_id_check = User.objects.filter(username=user_id)
+
+
+        if (not user_id or not user_pw or not user_pw_check):
+            error_state = True
+            error_msg = 'ID_PW_MISSING'
+            return render(request, 'signup.html', context)
+
+
+        if len(user_id_check) != 0:
+            error_state = True
+            error_msg = 'ID_EXIST'
+            return render(request, 'signup.html', context)
+
+
+        if user_pw != user_pw_check:
+            error_state = True
+            error_msg = 'PW_CHECK'
+            return render(request, 'signup.html', context)
+
+        user = User.objects.create_user(username=user_id, password=user_pw)
+        Member.objects.create(
+            user_id=user,
+            name=member_name,
+            content=member_intro
+        )
+        return redirect('index')
+        # if re.fullmatch(r'[A-Za-z0-9@#$%^&+~!]{8,}', user_pw):
+        #     User.objects.create(username=user_id, password=user_pw)
+        #     return redirect('index')
+        # else:
+        #     error_state = True
+        #     error_msg = 'PW_CHECK_REQUIRED'
 
     return render(request, 'signup.html', context)
 
@@ -148,14 +162,11 @@ def login_views(request):
             'state': False,
             'msg': ''
         },
-        'user': {
-            'is_authenticated': False
-        }
     }
     if request.method == 'POST':
         login_id = request.POST['login_id']
         login_pw = request.POST['login_pw']
-
+        print(login_id, login_pw)
         login_user = User.objects.filter(username=login_id)
 
         if (login_id and login_pw):
@@ -164,9 +175,10 @@ def login_views(request):
                     username=login_id,
                     password=login_pw
                 )
+                print(user)
                 if user != None:
                     login(request, user)
-                    context['user']['is_authenticated'] = True
+                    print(request.user)
                     return redirect('index')
                 else:
                     context['error']['state'] = True
@@ -182,4 +194,5 @@ def login_views(request):
 
 def logout_views(request):
     logout(request)
+    print(request.user)
     return redirect('index')

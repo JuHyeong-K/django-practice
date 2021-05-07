@@ -18,16 +18,16 @@
             <option value="null">카테고리를 선택해주세요</option>
             {% for category in categories %}
             {% if category.pk == category_pk %}
-            <option value="{{ category }}" selected>{{ category }}</option>
+            <option value="{{ category.name }}" selected>{{ category.name }}</option>
             {% else %}
-            <option value="{{ category }}">{{ category }}</option>
+            <option value="{{ category.name }}">{{ category.name }}</option>
             {% endif %}
             {% endfor %}
         </select><br/><br/>
         <label for="text_title">title :</label>
         <input type="text" name="title" id="text_title" placeholder="제목"><br/><br/>
         <label for="text_author">author :</label>
-        <input type="text" name="author" id="text_author" placeholder="작성자"><br/><br/>
+        <input type="text" name="author" id="text_author" placeholder="작성자" value="{{ user.username }}" disabled><br/><br/>
         <label for="text_content">content :</label><br/>
         <textarea name="content" id="text_content" cols="30" rows="10" placeholder="내용"></textarea><br/><br/>
         <button type="submit">Add</button>

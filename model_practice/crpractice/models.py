@@ -1,36 +1,27 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
-class MyClass(models.Model):
-    num = models.IntegerField()
-    lecturer = models.CharField(max_length=30)
-    room = models.CharField(max_length=30)
-    students_num = models.IntegerField()
-
-    def __str__(self):
-        return f"{self.num}"
-
-class MyStudent(models.Model):
-    name = models.CharField(max_length=30)
-    phone_num = models.CharField(max_length=30)
-    intro_text = models.TextField()
-    
-    def __str__(self):
-        return f"{self.name}"
 
 class Category(models.Model):
     name = models.CharField(max_length=30)
 
-    def __str__(self):
-        return f"{self.name}"
+class Member(models.Model):
+    user_id = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, related_name='member')
+    name = models.CharField(max_length=30)
+    content = models.CharField(max_length=100)
 
 class Article(models.Model):
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='articles')
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='article')
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='article')
     topic = models.CharField(max_length=30)
     content = models.CharField(max_length=100)
     date = models.DateField(auto_now=True)
-    author = models.CharField(max_length=30)
     is_deleted = models.BooleanField(default=False)
 
-    def __str__(self):
-        return f"{self.topic}"
+class Comment(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.SET_NULL, null=True, related_name='comment')
+    writer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='comment')
+    content = models.CharField(max_length=100)
+    date = models.DateField(auto_now=True)
+    is_deleted = models.BooleanField(default=False)

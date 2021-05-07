@@ -7,12 +7,14 @@
     <title>Detail</title>
 </head>
 <body>
-    <h1>{{ target_title.topic }}</h1>
+    <h1>{{ target_article.topic }}</h1>
     <a href="{% url 'categories' target_category_pk %}">back</a>
-    <p>날짜 : {{ target_title.date }}</p>
-    <p>작성자 : {{ target_title.author }}</p>
-    <p>내용 : {{ target_title.content }}</p>
-    <a href="{% url 'edit' target_title.pk %}">Edit</a>
-    <a href="{% url 'delete' target_title.pk %}">Delete</a>
+    <p>날짜 : {{ target_article.date }}</p>
+    <p>작성자 : {{ target_article.author }}</p>
+    <p>내용 : {{ target_article.content }}</p>
+    {% if user.username == target_article.author.username %}
+    <a href="{% url 'edit' target_article.pk %}">Edit</a>
+    <a href="{% url 'delete' target_article.pk %}">Delete</a>
+    {% endif %}
 </body>
 </html>
