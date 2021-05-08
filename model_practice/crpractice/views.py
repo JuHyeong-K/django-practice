@@ -24,13 +24,34 @@ def categories(request, category_pk):
     }
     return render(request, 'categories.html', context)
 
-def detail(request, title_pk):
-    target_article = get_object_or_404(Article, pk=title_pk)
+def detail(request, article_pk):
+    target_article = get_object_or_404(Article, pk=article_pk)
     target_category = get_object_or_404(Category, name=target_article.category.name)
+    comments = Comment.objects.filter(article=target_article).exclude(is_deleted=True)
     context = {
         'target_category_pk': target_category.pk,
-        'target_article': target_article
+        'target_article': target_article,
+        'comments': comments,
+        'error': {
+            'state': False,
+            'msg': ''
+        }
     }
+    if request.method == 'POST':
+        content = request.POST['comment_content']
+        if not content:
+            context['error']['state'] = True
+            context['error']['msg'] = 'CONTENT_MISSING'
+            return render(request, 'detail.html', context)
+
+
+        Comment.objects.create(
+            article=target_article,
+            writer=request.user,
+            content=content
+        )
+        return redirect('detail', article_pk)
+
     return render(request, 'detail.html', context)
 
 def add(request, category_pk):
@@ -104,12 +125,10 @@ def delete(request, article_pk):
     return redirect('categories', category_pk)
 
 def signup(request):
-    error_state = False
-    error_msg = ''
     context = {
         'error': {
-            'state': error_state,
-            'msg': error_msg
+            'state': False,
+            'msg': ''
         }
     }
     if request.method == 'POST':
@@ -121,23 +140,24 @@ def signup(request):
         member_intro = request.POST['member_intro']
 
         user_id_check = User.objects.filter(username=user_id)
+        print(user_id_check, len(user_id_check))
 
 
         if (not user_id or not user_pw or not user_pw_check):
-            error_state = True
-            error_msg = 'ID_PW_MISSING'
+            context['error']['state'] = True
+            context['error']['msg'] = 'ID_PW_MISSING'
             return render(request, 'signup.html', context)
 
 
         if len(user_id_check) != 0:
-            error_state = True
-            error_msg = 'ID_EXIST'
+            context['error']['state'] = True
+            context['error']['msg'] = 'ID_EXIST'
             return render(request, 'signup.html', context)
 
 
         if user_pw != user_pw_check:
-            error_state = True
-            error_msg = 'PW_CHECK'
+            context['error']['state'] = True
+            context['error']['msg'] = 'PW_CHECK'
             return render(request, 'signup.html', context)
 
         user = User.objects.create_user(username=user_id, password=user_pw)
@@ -175,10 +195,8 @@ def login_views(request):
                     username=login_id,
                     password=login_pw
                 )
-                print(user)
                 if user != None:
                     login(request, user)
-                    print(request.user)
                     return redirect('index')
                 else:
                     context['error']['state'] = True
@@ -194,5 +212,11 @@ def login_views(request):
 
 def logout_views(request):
     logout(request)
-    print(request.user)
     return redirect('index')
+
+def comment_delete(request, comment_pk):
+    # target_comment = get_object_or_404(Comment, pk=comment_pk) 
+    target_comment = Comment.objects.filter(pk=comment_pk) # update는 querySet 함수다.
+    article_pk = target_comment.first().article.pk
+    target_comment.update(is_deleted=True)
+    return redirect('detail', article_pk)

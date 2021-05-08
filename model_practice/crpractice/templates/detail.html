@@ -16,5 +16,31 @@
     <a href="{% url 'edit' target_article.pk %}">Edit</a>
     <a href="{% url 'delete' target_article.pk %}">Delete</a>
     {% endif %}
+    <br>
+    <br>
+    <h2>Comments</h2>
+    {% for comment in comments %}
+    <span>{{ comment.writer }}   |   </span>
+    <span>{{ comment.content }}   |   </span>
+    <span>{{ comment.date }}   </span>
+    {% if user == comment.writer %}
+    <a href="{% url 'comment_delete' comment.pk %}">Delete</a>
+    {% endif %}
+    <br>
+    <br>
+    {% endfor %}
+    {% if error.state %}
+    <h2>{{ error.msg }}</h2>
+    {% endif %}
+    <form action="{% url 'detail' target_article.pk %}" method="POST">
+        {% csrf_token %}
+        <label for="writer">Writer: </label>
+        <input type="text" name="comment_writer" id="writer" value="{{ user.username }}" disabled>
+        <br>
+        <br>
+        <textarea name="comment_content" cols="70" rows="10"></textarea>
+        <button type="submit">Commit</button>
+        <br>
+    </form>
 </body>
 </html>
