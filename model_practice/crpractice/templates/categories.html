@@ -7,12 +7,13 @@
     <title>Categories</title>
 </head>
 <body>
-    <h1>{{ target_category.name }}</h1>
+    <h1>Category</h1>
     <a href="{% url 'index' %}">back</a>
+    <h1>{{ target_category.name }}</h1>
     <ul>
         {% for title in titles %}
         <li>
-            <a href="{% url 'detail' title.pk %}">{{ title.topic }}</a>
+            <a href="{% url 'detail' title.pk 'False' %}">{{ title.topic }}</a>
             {{ title.date }}
         </li>
         {% endfor %}

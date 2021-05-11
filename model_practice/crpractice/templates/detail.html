@@ -7,32 +7,31 @@
     <title>Detail</title>
 </head>
 <body>
-    <h1>{{ target_article.topic }}</h1>
+    <h1>Detail</h1>
     <a href="{% url 'categories' target_category_pk %}">back</a>
+    <h1>{{ target_article.topic }}</h1>
     <p>날짜 : {{ target_article.date }}</p>
     <p>작성자 : {{ target_article.author }}</p>
-    <p>내용 : {{ target_article.content }}</p>
-    {% if user.username == target_article.author.username %}
+    <pre>내용 : {{ target_article.content }}</pre>
+    {% if user.username == target_article.author %}
     <a href="{% url 'edit' target_article.pk %}">Edit</a>
     <a href="{% url 'delete' target_article.pk %}">Delete</a>
     {% endif %}
-    <br>
-    <br>
-    <h2>Comments</h2>
+    <hr>
+    <h1>Comments</h1>
     {% for comment in comments %}
-    <span>{{ comment.writer }}   |   </span>
-    <span>{{ comment.content }}   |   </span>
-    <span>{{ comment.date }}   </span>
+    <span>작성자: {{ comment.writer }}</span>
+    <pre>{{ comment.content }}</pre>
+    <span>날짜: {{ comment.date }}</span>
     {% if user == comment.writer %}
     <a href="{% url 'comment_delete' comment.pk %}">Delete</a>
     {% endif %}
-    <br>
-    <br>
+    <pre>--------------</pre>
     {% endfor %}
-    {% if error.state %}
+    {% if error.status == 'True' %}
     <h2>{{ error.msg }}</h2>
     {% endif %}
-    <form action="{% url 'detail' target_article.pk %}" method="POST">
+    <form action="{% url 'comment_add' target_article.pk %}" method="POST">
         {% csrf_token %}
         <label for="writer">Writer: </label>
         <input type="text" name="comment_writer" id="writer" value="{{ user.username }}" disabled>

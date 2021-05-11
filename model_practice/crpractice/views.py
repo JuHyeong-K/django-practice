@@ -24,7 +24,7 @@ def categories(request, category_pk):
     }
     return render(request, 'categories.html', context)
 
-def detail(request, article_pk):
+def detail(request, article_pk, error_status):
     target_article = get_object_or_404(Article, pk=article_pk)
     target_category = get_object_or_404(Category, name=target_article.category.name)
     comments = Comment.objects.filter(article=target_article).exclude(is_deleted=True)
@@ -33,25 +33,12 @@ def detail(request, article_pk):
         'target_article': target_article,
         'comments': comments,
         'error': {
-            'state': False,
+            'status': error_status,
             'msg': ''
         }
     }
-    if request.method == 'POST':
-        content = request.POST['comment_content']
-        if not content:
-            context['error']['state'] = True
-            context['error']['msg'] = 'CONTENT_MISSING'
-            return render(request, 'detail.html', context)
-
-
-        Comment.objects.create(
-            article=target_article,
-            writer=request.user,
-            content=content
-        )
-        return redirect('detail', article_pk)
-
+    if request.method == 'GET' and context['error']['status'] == 'True':
+        context['error']['msg'] = 'MISSING_CONTEXT'
     return render(request, 'detail.html', context)
 
 def add(request, category_pk):
@@ -67,7 +54,6 @@ def add(request, category_pk):
     }
     # print(type(Category.objects.all()))
     if request.method == 'POST':
-        print(request.POST)
         # category = Category.objects.get(pk=category_pk)
         selected_category_name = request.POST['category']
         category = get_object_or_404(Category, name=selected_category_name)
@@ -84,9 +70,7 @@ def add(request, category_pk):
                 author = author,
                 content = content
             )
-        if category_pk == 0:
             return redirect('categories', category.pk)
-        return redirect('categories', category.pk)
             
     return render(request, 'add.html', context)
 
@@ -214,9 +198,51 @@ def logout_views(request):
     logout(request)
     return redirect('index')
 
+def comment_add(request, article_pk):
+    error_status = False
+    target_article = get_object_or_404(Article, pk=article_pk)
+    if request.method == 'POST':
+        content = request.POST['comment_content']
+        if content == '':
+            error_status = True
+            return redirect('detail', article_pk, error_status)            
+    Comment.objects.create(
+        article=target_article,
+        writer=request.user,
+        content=content
+    )
+    return redirect('detail', article_pk, error_status)
+
 def comment_delete(request, comment_pk):
+    error_status = False
     # target_comment = get_object_or_404(Comment, pk=comment_pk) 
     target_comment = Comment.objects.filter(pk=comment_pk) # update는 querySet 함수다.
     article_pk = target_comment.first().article.pk
     target_comment.update(is_deleted=True)
-    return redirect('detail', article_pk)
+    return redirect('detail', article_pk, error_status)
+
+def mypage(request):
+    categories = Category.objects.all()
+    articles = Article.objects.filter(author=request.user).exclude(is_deleted=True)
+    comments = Comment.objects.filter(writer=request.user).exclude(is_deleted=True)
+    context = {
+        'categories': categories,
+        'articles': articles,
+        'comments': comments
+    }
+    return render(request, 'mypage.html', context)
+
+def mypage_article_delete(request, article_pk):
+    target_article = Article.objects.filter(pk=article_pk)
+    comments_of_article = Comment.objects.filter(article=target_article.first())
+    print(target_article)
+    print(comments_of_article)
+    target_article.update(is_deleted=True)
+    comments_of_article.update(is_deleted=True)
+
+    return redirect('mypage')
+
+def mypage_comment_delete(request, comment_pk):
+    target_comment = Comment.objects.filter(pk=comment_pk)
+    target_comment.update(is_deleted=True)
+    return redirect('mypage')

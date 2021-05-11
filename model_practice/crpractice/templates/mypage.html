@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>{{ user.username }}'s Page</h1>
+    <h2>My Articles</h2>
+    <ul>
+        {% for category in categories %}
+        <li>{{ category.name }}</li>
+        <ul>
+            {% for article in articles %}
+            {% if article.category == category %}
+            <li>
+                <a href="{% url 'detail' article.pk 'False' %}">{{ article.topic }} {{ article.date }}</a>
+                <form action="{% url 'mypage_article_delete' article.pk %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
+            {% endif %}
+            {% endfor %}
+        </ul>
+        {% endfor %}
+    </ul>
+    <hr>
+    <h2>My Comments</h2>
+    <ul>
+        {% for comment in comments %}
+        <li>
+            <a href="{% url 'detail' comment.article.pk 'False' %}">{{ comment.content }}</a>
+            <form action="{% url 'mypage_comment_delete' comment.pk %}" method="POST">
+                {% csrf_token %}
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

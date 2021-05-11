@@ -8,6 +8,7 @@
 </head>
 <body>
     <h1>Add page</h1>
+    <a href="{% url 'categories' category_pk %}">back</a>
     {% if error.error %}
     <h2>{{ error.msg }}</h2>
     {% endif %}

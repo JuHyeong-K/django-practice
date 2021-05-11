@@ -8,15 +8,19 @@
 </head>
 <body>
     <h1>index</h1>
+    <h2>{{ user.username }}님, 안녕하세요!</h2>
     {% if user.is_authenticated %}
     <form action="{% url 'logout' %}" method="POST">
         {% csrf_token %}
         <button type="submit">Log out</button>
     </form>
+    <form action="{% url 'mypage' %}" method="GET">
+        <button type="submit">My page</button>
+    </form>
     <h2>categories</h2>
     <ul>
         {% for category in categories %}
-            <li><a href="{% url 'categories' category.pk %}">{{category.name}}</a></li>
+            <li><a href="{% url 'categories' category.pk %}">{{ category.name }}</a></li>
         {% endfor %}
     </ul>
     <!-- <a href="{% url 'add' 0 %}">Add</a> -->
