@@ -33,4 +33,6 @@ urlpatterns = [
     path('mypage/', views.mypage, name='mypage'),
     path('mypage_article_delete/<int:article_pk>', views.mypage_article_delete, name='mypage_article_delete'),
     path('mypage_comment_delete/<int:comment_pk>', views.mypage_comment_delete, name='mypage_comment_delete'),
+    path('following/<int:article_pk>', views.following, name='following'),
+    path('like/<int:comment_pk>', views.like, name='like'),
 ]

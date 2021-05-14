@@ -8,8 +8,8 @@
 </head>
 <body>
     <h1>index</h1>
-    <h2>{{ user.username }}님, 안녕하세요!</h2>
     {% if user.is_authenticated %}
+    <h2>{{ user.username }}님, 안녕하세요!</h2>
     <form action="{% url 'logout' %}" method="POST">
         {% csrf_token %}
         <button type="submit">Log out</button>
@@ -25,6 +25,7 @@
     </ul>
     <!-- <a href="{% url 'add' 0 %}">Add</a> -->
     {% else %}
+    <h2>로그인 해주세요</h2>
     <form action="{% url 'signup' %}" method="GET">
         <button type="submit">회원가입</button>
     </form>

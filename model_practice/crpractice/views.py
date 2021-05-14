@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Category, Article, Member, Comment
+from .models import Category, Article, Like, Member, Comment, RelationShip
 from django.core.exceptions import ObjectDoesNotExist # get()요청의 예외처리 except: ObjectDoesNoteExist
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
@@ -150,6 +150,9 @@ def signup(request):
             name=member_name,
             content=member_intro
         )
+        RelationShip.objects.create(
+            member=user
+        )
         return redirect('index')
         # if re.fullmatch(r'[A-Za-z0-9@#$%^&+~!]{8,}', user_pw):
         #     User.objects.create(username=user_id, password=user_pw)
@@ -235,8 +238,6 @@ def mypage(request):
 def mypage_article_delete(request, article_pk):
     target_article = Article.objects.filter(pk=article_pk)
     comments_of_article = Comment.objects.filter(article=target_article.first())
-    print(target_article)
-    print(comments_of_article)
     target_article.update(is_deleted=True)
     comments_of_article.update(is_deleted=True)
 
@@ -246,3 +247,25 @@ def mypage_comment_delete(request, comment_pk):
     target_comment = Comment.objects.filter(pk=comment_pk)
     target_comment.update(is_deleted=True)
     return redirect('mypage')
+
+def following(request, article_pk):
+    error_status = False
+    target_article = Article.objects.filter(pk=article_pk).first()
+    follow = RelationShip.objects.filter(member=target_article.author).first()
+    if request.user in follow.follower.all():
+        follow.follower.remove(request.user)
+        return redirect('detail', article_pk, error_status)
+    follow.follower.add(request.user)
+    return redirect('detail', article_pk, error_status)
+    
+def like(request, comment_pk):
+    error_status = False
+    target_comment = Comment.objects.filter(pk=comment_pk).first()
+    like = Like.objects.filter(comment=target_comment).first()
+    if request.user in like.member.all():
+        like.member.remove(request.user)
+        return redirect('detail', target_comment.article.pk, error_status)
+
+    like.member.add(request.user)
+    return redirect('detail', target_comment.article.pk, error_status)
+    

@@ -12,6 +12,15 @@
     <h1>{{ target_article.topic }}</h1>
     <p>날짜 : {{ target_article.date }}</p>
     <p>작성자 : {{ target_article.author }}</p>
+    <form action="{% url 'following' target_article.pk %}" method="POST">
+        {% csrf_token %}
+        {% if user in target_article.author.relationship.follower.all %}
+        <button type="submit">unfollow</button>
+        {% elif user == target_article.author  %}
+        {% else %}
+        <button type="submit">follow</button>
+        {% endif %}
+    </form>
     <pre>내용 : {{ target_article.content }}</pre>
     {% if user.username == target_article.author %}
     <a href="{% url 'edit' target_article.pk %}">Edit</a>
@@ -20,9 +29,22 @@
     <hr>
     <h1>Comments</h1>
     {% for comment in comments %}
+    <span>날짜: {{ comment.date }}</span>
+    <br>
+    <br>
     <span>작성자: {{ comment.writer }}</span>
     <pre>{{ comment.content }}</pre>
-    <span>날짜: {{ comment.date }}</span>
+    <span>좋아요 개수: {{ comment.like.member.all|length }}</span>
+    <br>
+    <form action="{% url 'like' comment.pk %}" method="POST">
+        {% csrf_token %}
+        {% if comment.writer == user %}
+        {% elif user in comment.like.member.all %}
+        <button type="submit">좋아요 취소</button>
+        {% else %}
+        <button type="submit">좋아요</button>
+        {% endif %}
+    </form>
     {% if user == comment.writer %}
     <a href="{% url 'comment_delete' comment.pk %}">Delete</a>
     {% endif %}
