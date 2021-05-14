@@ -19,6 +19,15 @@
         <input type="text" name="author" id="text_author"  value="{{ user.username }}" placeholder="작성자" disabled><br/><br/>
         <label for="text_content">content :</label><br/>
         <textarea name="content" id="text_content" cols="30" rows="10" placeholder="내용">{{ article.content }}</textarea><br/><br/>
+        <label for="text_tag">tags :</label>
+        <input type="text" name="tag" id="text_tag">
+        <button type="submit">Add</button>
+        <br>
+        {% for tag in article.hashtag.all %}
+        <span>#{{ tag.name }}  </span>
+        {% endfor %}
+        <br/>
+        <br/>
         <button type="submit">Edit</button>
     </form>
 </body>

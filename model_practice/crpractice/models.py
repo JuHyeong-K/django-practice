@@ -51,9 +51,18 @@ class RelationShip(models.Model):
 
 
 class Like(models.Model):
-    member = models.ManyToManyField(User, related_name='like')
+    member = models.ManyToManyField(User, related_name='like', blank=True)
     comment = models.OneToOneField(Comment, on_delete=models.CASCADE, related_name='like')
 
     def __str__(self):
         return f'{self.comment}'
+
+class HashTag(models.Model):
+    name = models.CharField(max_length=64)
+    article = models.ManyToManyField(Article, related_name='hashtag', blank=True)
+
+    def __str__(self):
+        return f'{self.name}'
+
+
     

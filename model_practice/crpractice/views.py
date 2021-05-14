@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Category, Article, Like, Member, Comment, RelationShip
+from .models import Category, Article, Like, Member, Comment, RelationShip, HashTag
 from django.core.exceptions import ObjectDoesNotExist # get()요청의 예외처리 except: ObjectDoesNoteExist
 from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
@@ -75,6 +75,7 @@ def add(request, category_pk):
     return render(request, 'add.html', context)
 
 def edit(request, article_pk):
+    error_status = False
     article = get_object_or_404(Article, pk=article_pk)
     error = {
         'error': False,
@@ -85,7 +86,8 @@ def edit(request, article_pk):
         'article': article,
         'error': error
     }
-    if request.method == 'POST':
+    print(request.POST)
+    if request.method == 'POST' and request.POST['tag'] == '':
         topic = request.POST['title']
         author = request.user
         content = request.POST['content']
@@ -98,7 +100,24 @@ def edit(request, article_pk):
                 author = author,
                 content = content
             )
-            return redirect('detail', article_pk)
+            return redirect('detail', article_pk, error_status)
+    elif request.method == 'POST' and request.POST['tag'] != '':
+        tag_name = request.POST['tag']
+        tags = [tag.name for tag in HashTag.objects.all()]
+        if tag_name not in tags:
+            HashTag.objects.create(name=tag_name)
+            tag = HashTag.objects.filter(name=tag_name).first()
+            tag.article.add(article)
+        else:
+            tag = HashTag.objects.filter(name=tag_name).first()
+            tag.article.add(article)
+
+        # if tag_name not in HashTag.objects.all():
+        #     tag = HashTag.objects.create(
+        #         name=request.POST['tag'],
+        #         article=article
+        #         )
+        
     return render(request, 'edit.html', context)
 
 def delete(request, article_pk):
@@ -209,10 +228,13 @@ def comment_add(request, article_pk):
         if content == '':
             error_status = True
             return redirect('detail', article_pk, error_status)            
-    Comment.objects.create(
+    comment = Comment.objects.create(
         article=target_article,
         writer=request.user,
         content=content
+    )
+    Like.objects.create(
+        comment=comment
     )
     return redirect('detail', article_pk, error_status)
 
@@ -269,3 +291,11 @@ def like(request, comment_pk):
     like.member.add(request.user)
     return redirect('detail', target_comment.article.pk, error_status)
     
+def tag_article(request, tag_pk):
+    target_tag = HashTag.objects.filter(pk=tag_pk).first()
+    articles = target_tag.article.all()
+    context = {
+        'tag': target_tag,
+        'articles': articles
+    }
+    return render(request, 'tag_article.html', context)

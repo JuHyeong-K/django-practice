@@ -22,7 +22,18 @@
         {% endif %}
     </form>
     <pre>내용 : {{ target_article.content }}</pre>
-    {% if user.username == target_article.author %}
+    {% if not target_article.hashtag.all %}
+    {% else %}
+    <span>태그 : 
+        {% for tag in target_article.hashtag.all %}
+        <a href="{% url 'tag_article' tag.pk %}">#{{ tag.name }} </a> |
+
+        {% endfor %}
+    </span>
+    {% endif %}
+    <br>
+    <br>
+    {% if user == target_article.author %}
     <a href="{% url 'edit' target_article.pk %}">Edit</a>
     <a href="{% url 'delete' target_article.pk %}">Delete</a>
     {% endif %}
