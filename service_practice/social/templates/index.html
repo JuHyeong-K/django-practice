@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if user.is_authenticated %}
+<h1>{{ user.username }} 님, 안녕하세요!</h1>
+{% else %}
+<a href="{% url 'accounts:signup' %}">Signup</a>
+<br>
+<a href="{% url 'accounts:login' %}">Login</a>
+{%  endif %}
+{% endblock content %}

@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.deletion import CASCADE
 
 # Create your models here.
 
@@ -18,7 +17,6 @@ class Member(models.Model):
     
     def __str__(self):
         return self.name
-            
 
 class Article(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='article')
@@ -43,7 +41,7 @@ class Comment(models.Model):
         return self.content
 
 class RelationShip(models.Model):
-    member = models.OneToOneField(User, on_delete=CASCADE, related_name='relationship')
+    member = models.OneToOneField(User, on_delete=models.CASCADE, related_name='relationship')
     follower = models.ManyToManyField(User, related_name='following')
 
     def __str__(self):
