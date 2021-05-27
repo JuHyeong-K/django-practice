@@ -57,7 +57,7 @@ class ArticleEditView(LoginRequiredMixin, View):
         result = BlogService.edit(edit_dto)
         if result['error']['state']:
             return render(request, 'edit.html', result)
-        return redirect('article_detail', self.kwargs['category_name'], self.kwargs['detail_pk'])
+        return redirect(f"/blog/categories/{self.kwargs['category_name']}/{self.kwargs['detail_pk']}")
 
     def _build_edit_dto(self, post_data):
         return EditDto(article_pk=self.kwargs['detail_pk'], title=post_data['title'], content=post_data['content'])
