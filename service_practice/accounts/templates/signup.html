@@ -7,15 +7,15 @@
     {% endif %}
     <form action="{% url 'accounts:signup' %}" method="POST">
         {% csrf_token %}
-        <label for="identification">ID: </label>
+        <label for="identification">* ID: </label>
         <input type="text" name="user_id" id="identification">
         <br>
         <br>
-        <label for="password">PW: </label>
+        <label for="password">* PW: </label>
         <input type="password" name="user_pw" id="password" placeholder="8자리 이상, 소문자, 대문자, 특수문자 1개씩 포함">
         <br>
         <br>
-        <label for="password_check">PW_Check: </label>
+        <label for="password_check">* PW_Check: </label>
         <input type="password" name="user_pw_check" id="password_check">
         <br>
         <br>

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Detail</h1>
+<a href="{% url 'blog:categories_name' article.category.name %}">back</a>
+<h1>{{ article.topic }}</h1>
+<p>작성자 : {{ article.author }}</p>
+<pre>내용 : {{ article.content }}</pre>
+{% if article.author == user %}
+<a href="{% url 'blog:article_edit' article.category.name article.pk %}">edit</a>
+{% endif %}
+{% endblock content %}

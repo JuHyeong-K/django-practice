@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.views import View
+from django.views.generic import RedirectView
 from django.contrib import auth
 
 
-from .services import SignupDto, UserService
+from .services import SignupDto, UserService, LoginDto
 # Create your views here.
 class SignupView(View):
     def get(self, request, *args, **kwargs):
@@ -30,3 +31,22 @@ class SignupView(View):
 class LoginView(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'login.html')
+    
+    def post(self, request, *args, **kwargs):
+        login_dto = self._build_login_dto(request.POST)
+        result = UserService.login(login_dto)
+        if result['error']['state']:
+            return render(request, 'login.html', result)
+        auth.login(request, result['user'])
+        return redirect('/blog/categories')
+
+    @staticmethod
+    def _build_login_dto(post_data):
+        return LoginDto(
+            login_id=post_data['login_id'],
+            login_pw=post_data['login_pw']
+            )
+
+def logout(request):
+    auth.logout(request)
+    return redirect('index')

@@ -1,5 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Login page</h1>
+    <h1>Login</h1>
+    {% if error.state %}
+    <h2>{{ error.msg }}</h2>
+    {% endif %}
+    <form action="{% url 'accounts:login' %}" method="POST">
+        {% csrf_token %}
+        <label for="login_identification">ID: </label>
+        <input type="text" name="login_id" id="login_identification">
+        <br>
+        <br>
+        <label for="login_password">PW: </label>
+        <input type="password" name="login_pw" id="login_password">
+        <br>
+        <br>
+        <button type="submit">Login</button>
+    </form>
 {% endblock content %}

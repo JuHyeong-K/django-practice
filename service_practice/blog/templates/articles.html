@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ category_name }}</h1>
+<a href="{% url 'blog:categories' %}">back</a>
+<ul>
+{% for article in target_articles %}
+    <li><a href="{% url 'blog:article_detail' category_name article.pk %}">{{ article.topic }}</a></li>
+{% endfor %}
+</ul>
+{% endblock content %}
